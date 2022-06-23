@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -10,28 +10,44 @@ import { ApiService } from 'src/app/services/api.service';
 export class AddToCartComponent implements OnInit {
     constructor(private api: ApiService) {}
 
+    @Input() product_id!: number;
     products = [];
 
     ngOnInit(): void {}
 
-    addProduct(id: number) {
+    addProduct(product_id: number) {
         this.api.getProducts().subscribe({
             next: (resp: []) => {
                 this.products = resp;
-                const product = this.products.find(
-                    (product: any) => product.id == id
+
+                let cart = Array.from(
+                    JSON.parse(localStorage.getItem('cart') as string)
                 );
 
-                let currentCart = localStorage.getItem('cart');
-
-                // localStorage.setItem(
-                //     'cart'
-                //     // JSON.stringify([...currentCart, product])
-                // );
-
-                console.log(
-                    JSON.stringify(localStorage.getItem('cart'), undefined, 4)
+                let duplicateCartItem: any = cart.find(
+                    (cartItm: any) => product_id == cartItm.id
                 );
+
+                if (duplicateCartItem) {
+                    duplicateCartItem.amount++;
+                } else {
+                    duplicateCartItem.amount = 1;
+                }
+
+                let product = this.products.find(
+                    (product: any) => product.id == product_id
+                );
+
+                let currentCart: any[] = [];
+
+                if (!!localStorage.getItem('cart')) {
+                    currentCart = Array.from(
+                        JSON.parse(localStorage.getItem('cart') as string)
+                    );
+                }
+
+                currentCart.push(product);
+                localStorage.setItem('cart', JSON.stringify(currentCart));
             },
         });
     }
