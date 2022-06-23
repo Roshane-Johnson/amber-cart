@@ -16,7 +16,6 @@ export class HomeComponent implements OnInit {
         this.dataService.sendGetRequest('/products').subscribe({
             next: (resp) => {
                 this.products = resp;
-                console.log(resp);
             },
         });
     }

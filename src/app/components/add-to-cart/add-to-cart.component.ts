@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 
 @Component({
@@ -19,25 +18,6 @@ export class AddToCartComponent implements OnInit {
         this.api.getProducts().subscribe({
             next: (resp: []) => {
                 this.products = resp;
-
-                let cart = Array.from(
-                    JSON.parse(localStorage.getItem('cart') as string)
-                );
-
-                let duplicateCartItem: any = cart.find(
-                    (cartItm: any) => product_id == cartItm.id
-                );
-
-                if (duplicateCartItem) {
-                    duplicateCartItem.amount++;
-                } else {
-                    duplicateCartItem.amount = 1;
-                }
-
-                let product = this.products.find(
-                    (product: any) => product.id == product_id
-                );
-
                 let currentCart: any[] = [];
 
                 if (!!localStorage.getItem('cart')) {
@@ -46,7 +26,31 @@ export class AddToCartComponent implements OnInit {
                     );
                 }
 
-                currentCart.push(product);
+                currentCart.forEach((product) => {
+                    if (!product.amount) product.amount = 1;
+                });
+
+                let duplicateCartItem: any = currentCart.find(
+                    (cartItm: any) => product_id == cartItm.id
+                );
+
+                if (duplicateCartItem) {
+                    duplicateCartItem.amount += 1;
+                } else {
+                    let product: any = this.products.find(
+                        (product: any) => product.id == product_id
+                    );
+
+                    currentCart.push({
+                        id: product.id,
+                        name: product.name,
+                        description: product.description,
+                        price: product.price,
+                        imageUrl: product.imageUrl,
+                        amount: 1,
+                    });
+                }
+
                 localStorage.setItem('cart', JSON.stringify(currentCart));
             },
         });
