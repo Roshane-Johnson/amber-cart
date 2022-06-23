@@ -1,0 +1,14 @@
+<style>
+    div {
+        display: grid;
+        grid-template: auto / repeat(4, 1fr);
+        gap: 3rem;
+        padding: 5rem 3rem;
+    }
+</style>
+<div>
+    <app-product-item
+        [product]="product"
+        *ngFor="let product of products"
+    ></app-product-item>
+</div>

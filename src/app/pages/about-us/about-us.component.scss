@@ -1,0 +1,20 @@
+section {
+    .header {
+        color: white;
+        background-color: darken(#3f51b5, 10);
+        text-align: center;
+        padding-block: 4rem;
+
+        h1 {
+            font-size: x-large;
+            font-weight: bold;
+        }
+    }
+
+    .about-us {
+        font-size: medium;
+        width: 50%;
+        margin: 0 auto;
+        padding: 4rem 0;
+    }
+}
