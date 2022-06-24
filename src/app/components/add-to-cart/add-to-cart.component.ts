@@ -14,33 +14,34 @@ export class AddToCartComponent implements OnInit {
 
     ngOnInit(): void {}
 
-    addProduct(product_id: number) {
+    addProduct(id: number) {
         this.api.getProducts().subscribe({
             next: (resp: []) => {
                 this.products = resp;
                 let currentCart: any[] = [];
 
+                // If `cart` is found in localStorage we store it in `currentCart`
                 if (!!localStorage.getItem('cart')) {
                     currentCart = Array.from(
                         JSON.parse(localStorage.getItem('cart') as string)
                     );
                 }
 
-                currentCart.forEach((product) => {
-                    if (!product.amount) product.amount = 1;
-                });
-
+                // Search for duplicate cart item
                 let duplicateCartItem: any = currentCart.find(
-                    (cartItm: any) => product_id == cartItm.id
+                    (cartItem: any) => cartItem.id == id
                 );
 
+                // If duplicate cart item is found we increment the amount instead of inserting a new product to the cart
                 if (duplicateCartItem) {
                     duplicateCartItem.amount += 1;
                 } else {
+                    // Finding the product being added to the cart
                     let product: any = this.products.find(
-                        (product: any) => product.id == product_id
+                        (product: any) => product.id == id
                     );
 
+                    // Add the product found to the cart with `amount` set to `1`
                     currentCart.push({
                         id: product.id,
                         name: product.name,
@@ -51,6 +52,7 @@ export class AddToCartComponent implements OnInit {
                     });
                 }
 
+                // Updating the cart in localStorage with the new information
                 localStorage.setItem('cart', JSON.stringify(currentCart));
             },
         });
